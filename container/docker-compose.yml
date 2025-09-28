@@ -15,8 +15,7 @@ services:
       - "27015:27015"
       - "26900:2690/udp"
     environment:
-      - GAME=${GAME}
       - FLAG=${FLAG}
       - VERSION=${VERSION}
       - IMAGE=${IMAGE}
-    command: +maxplayers 12 +log on +rcon_password "changeme" +map crossfire
+    command: -console +maxplayers 12 +log on +rcon_password "changeme"

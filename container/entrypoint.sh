@@ -61,4 +61,4 @@ echo "
 echo "\e[32mStarting Half-Life Dedicated Server...\e[0m"
 
 # Start the server with the specified game and any additional arguments.
-./hlds_run "-game $GAME $@"
+./svends_run "$@"

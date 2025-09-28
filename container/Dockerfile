@@ -21,7 +21,7 @@ ARG IMAGE=custom
 ENV IMAGE ${IMAGE}
 
 # Tags the image with the Open Containers Initiative (OCI) image format.
-LABEL org.opencontainers.image.title="hlds:${GAME}"
+LABEL org.opencontainers.image.title="Sven Co-Op Dedicated Server"
 LABEL org.opencontainers.image.description="🐋 📦 Half-Life Dedicated Server powered by Docker. Supports all the classic GoldSrc Half-Life games and mods, including the ability to add custom configurations and plugins."
 LABEL org.opencontainers.image.vendor="https://jamesiv.es"
 LABEL org.opencontainers.image.authors="James Ives (https://jamesiv.es)"
@@ -34,7 +34,7 @@ LABEL org.opencontainers.image.version="${VERSION}"
 # Installs the necessary dependencies for the SteamCMD installer.
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
-    apt-get install -y --no-install-recommends curl rsync file libc6:i386 lib32stdc++6 ca-certificates && \
+    apt-get install -y --no-install-recommends curl rsync file libc6:i386 lib32stdc++6 ca-certificates xz-utils libcurl4-gnutls-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Creates a new user and group for the SteamCMD installer.
@@ -55,9 +55,7 @@ WORKDIR /opt/steam
 # Copies the hlds.txt file to the container.
 COPY ./hlds.txt /opt/steam
 
-# Replaces $GAME with the requested mod to install in hlds.txt.
-# Additionally replaces $FLAG with any additional flags that should be passed to the SteamCMD installer to support betas.
-RUN sed -i "s/\$GAME/${GAME}/g" /opt/steam/hlds.txt
+# Replaces replaces $FLAG with any additional flags that should be passed to the SteamCMD installer to support betas.
 RUN sed -i "s/\$FLAG/${FLAG}/g" /opt/steam/hlds.txt
 
 # Downloads and extracts the SteamCMD installer.
@@ -70,6 +68,19 @@ RUN curl -v -sL media.steampowered.com/client/installer/steamcmd_linux.tar.gz | 
 RUN mkdir -p $HOME/.steam \
     && ln -s /opt/steam/linux32 $HOME/.steam/sdk32 \
     && echo 70 > /opt/steam/hlds/steam_appid.txt
+
+# Install MetaMod-p
+RUN mkdir -p /opt/steam/hlds/svencoop/addons/dlls/
+RUN mkdir -p /opt/steam/hlds/svencoop/addons/metamod/
+RUN curl -v -sL https://github.com/Bots-United/metamod-p/releases/download/v1.21p38/metamod_i686_linux_win32-1.21p38.tar.xz | \
+    tar xJvf - -C /opt/steam/hlds/svencoop/addons/dlls
+RUN sed -i "s/dlls\/server.so/addons\/dlls\/metamod.so/g" /opt/steam/hlds/svencoop/liblist.gam
+COPY ./config/config.ini /opt/steam/hlds/svencoop/addons/metamod/
+COPY ./config/plugins.ini /opt/steam/hlds/svencoop/addons/metamod/
+
+# Install AMX Mod X
+RUN curl -v -sL https://www.amxmodx.org/release/amxmodx-1.8.2-base-linux.tar.gz | \
+    tar xzvf - -C /opt/steam/hlds/svencoop/
 
 WORKDIR /opt/steam/hlds
 
