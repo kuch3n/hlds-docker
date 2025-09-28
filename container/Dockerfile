@@ -69,19 +69,6 @@ RUN mkdir -p $HOME/.steam \
     && ln -s /opt/steam/linux32 $HOME/.steam/sdk32 \
     && echo 70 > /opt/steam/hlds/steam_appid.txt
 
-# Install MetaMod-p
-RUN mkdir -p /opt/steam/hlds/svencoop/addons/dlls/
-RUN mkdir -p /opt/steam/hlds/svencoop/addons/metamod/
-RUN curl -v -sL https://github.com/Bots-United/metamod-p/releases/download/v1.21p38/metamod_i686_linux_win32-1.21p38.tar.xz | \
-    tar xJvf - -C /opt/steam/hlds/svencoop/addons/dlls
-RUN sed -i "s/dlls\/server.so/addons\/dlls\/metamod.so/g" /opt/steam/hlds/svencoop/liblist.gam
-COPY ./config/config.ini /opt/steam/hlds/svencoop/addons/metamod/
-COPY ./config/plugins.ini /opt/steam/hlds/svencoop/addons/metamod/
-
-# Install AMX Mod X
-RUN curl -v -sL https://www.amxmodx.org/release/amxmodx-1.8.2-base-linux.tar.gz | \
-    tar xzvf - -C /opt/steam/hlds/svencoop/
-
 WORKDIR /opt/steam/hlds
 
 # Copies the entrypoint script to the container and sets the necessary permissions.

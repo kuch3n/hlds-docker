@@ -16,7 +16,12 @@ fi
 
 if [ -d /temp/config ]
 then
-  rsync --recursive --update --chown=steam:steam /temp/config/* /opt/steam/hlds/$GAME
+  rsync --recursive --update --chown=steam:steam /temp/config/* /opt/steam/hlds/svencoop
+fi
+
+if [ -d /temp/addons ]
+then
+  rsync --recursive --update --chown=steam:steam /temp/addons/* /opt/steam/hlds/svencoop/addons
 fi
 
 

@@ -8,6 +8,7 @@ services:
         - VERSION=${VERSION}
         - IMAGE=${IMAGE}
     volumes:
+      - "./addons:/temp/addons"
       - "./config:/temp/config"
       - "./mods:/temp/mods"
     ports:
@@ -18,4 +19,4 @@ services:
       - FLAG=${FLAG}
       - VERSION=${VERSION}
       - IMAGE=${IMAGE}
-    command: -console +maxplayers 12 +log on +rcon_password "changeme"
+    command: -console +sv_lan 1 +maxplayers 12 +log on +rcon_password "changeme"
